@@ -8,12 +8,27 @@
 </head>
 <body>
 
-    <div class="calculator">
+    <div class="splash-screen" id="splash-screen">
+        <div class="splash-spacer"></div>
+        <div class="splash-content">
+            <h1>Modern Calculator</h1>
+            <p>Simple • Fast • Accurate</p>
+            <div class="math-loader">
+                <div class="math-loader-bg-progress"></div>
+                <div class="math-loader-chars" id="math-loader-chars"></div>
+                <div class="math-loader-percent" id="math-loader-percent">0%</div>
+            </div>
+        </div>
+        <div class="splash-footer">
+            made with ❤️ by <a href="https://github.com/RajitCodez" target="_blank">Rajit</a>
+        </div>
+    </div>
+
+    <div class="calculator" id="main-calculator">
         <div class="display" id="display-container">
             <div class="expression" id="expression">0</div>
             <div class="result-preview" id="result-preview"></div>
         </div>
-        
         <div class="toolbar">
             <button class="tool-btn" id="history-toggle" title="History">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -22,7 +37,6 @@
                 </svg>
             </button>
         </div>
-
         <div class="keypad-wrapper">
             <div class="keypad" id="keypad">
                 <button class="btn ctrl-btn" data-action="clear">AC</button>
@@ -35,33 +49,37 @@
                 </button>
                 <button class="btn ctrl-btn" data-action="sign">+/-</button>
                 <button class="btn op-btn" data-operator="÷">÷</button>
-
+                
                 <button class="btn" data-number="7">7</button>
                 <button class="btn" data-number="8">8</button>
                 <button class="btn" data-number="9">9</button>
                 <button class="btn op-btn" data-operator="×">×</button>
-
+                
                 <button class="btn" data-number="4">4</button>
                 <button class="btn" data-number="5">5</button>
                 <button class="btn" data-number="6">6</button>
                 <button class="btn op-btn" data-operator="-">-</button>
-
+                
                 <button class="btn" data-number="1">1</button>
                 <button class="btn" data-number="2">2</button>
                 <button class="btn" data-number="3">3</button>
                 <button class="btn op-btn" data-operator="+">+</button>
-
+                
                 <button class="btn" data-number="%">%</button>
                 <button class="btn" data-number="0">0</button>
                 <button class="btn" data-number=".">.</button>
                 <button class="btn equals-btn" data-action="calculate">=</button>
             </div>
-
+            
             <div class="history-panel" id="history-panel">
                 <div class="history-list" id="history-list"></div>
                 <button class="clear-history-btn" id="clear-history">Clear history</button>
             </div>
         </div>
+    </div>
+
+    <div class="main-footer" id="main-footer">
+        made with ❤️ by <a href="https://github.com/RajitCodez" target="_blank">Rajit</a>
     </div>
 
     <script src="script.js"></script>

@@ -1,3 +1,38 @@
+window.addEventListener('load', () => {
+    const charBox = document.getElementById('math-loader-chars');
+    const percentText = document.getElementById('math-loader-percent');
+    const splashScreen = document.getElementById('splash-screen');
+    const calcApp = document.getElementById('main-calculator');
+    const mainFooter = document.getElementById('main-footer');
+    
+    const chars = '0123456789+-×÷%';
+    let progress = 0;
+    const totalSteps = 100;
+    const intervalTime = 18; 
+
+    const loaderInterval = setInterval(() => {
+        progress++;
+        let chunk = '';
+        for(let i=0; i<3; i++) {
+            chunk += chars.charAt(Math.floor(Math.random() * chars.length)) + ' ';
+        }
+        
+        charBox.innerText += chunk;
+        percentText.innerText = progress + '%';
+
+        if (progress >= totalSteps) {
+            clearInterval(loaderInterval);
+            setTimeout(() => {
+                if (splashScreen) splashScreen.classList.add('hidden');
+                setTimeout(() => {
+                    if (calcApp) calcApp.classList.add('show');
+                    if (mainFooter) mainFooter.classList.add('show');
+                }, 300); 
+            }, 300);
+        }
+    }, intervalTime);
+});
+
 const state = {
     expression: '0',
     isAnimating: false,
@@ -17,28 +52,21 @@ const DOM = {
     clearHistoryBtn: document.getElementById('clear-history')
 };
 
-
 const cleanExpression = (expr) => expr.replace(/[+\-×÷.]$/, '');
-        
+
 const evaluateMath = (expr) => {
     try {
         const jsExpr = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/%/g, '/100');
         const result = new Function(`return ${jsExpr}`)();
-        return isNaN(result) || result === undefined ? 'indeterminate' : 
+        return isNaN(result) || result === undefined ? '' : 
                Number.isInteger(result) ? result : parseFloat(result.toFixed(8));
     } catch { return ''; }
 };
 
 const updateDisplay = () => {
-    DOM.expDisplay.innerHTML = state.expression
-        .replace(/([+\-×÷])/g, '<span class="op">$1</span>') || '0';
-            
+    DOM.expDisplay.innerHTML = state.expression.replace(/([+\-×÷])/g, '<span class="op">$1</span>') || '0';
     const evalStr = cleanExpression(state.expression);
-    if (/[+\-×÷]/.test(evalStr)) {
-        DOM.previewDisplay.innerText = evaluateMath(evalStr);
-    } else {
-        DOM.previewDisplay.innerText = '';
-    }
+    DOM.previewDisplay.innerText = /[+\-×÷]/.test(evalStr) ? evaluateMath(evalStr) : '';
 };
 
 const actions = {
@@ -71,23 +99,22 @@ const actions = {
     },
     calculate: () => {
         if (DOM.previewDisplay.innerText === '') return;
-                
+        
         state.isAnimating = true;
         const resultStr = DOM.previewDisplay.innerText;
         const originalExpr = cleanExpression(state.expression);
-
+        
         DOM.container.classList.add('animating');
-                
+        
         setTimeout(() => {
             DOM.expDisplay.style.transition = DOM.previewDisplay.style.transition = 'none';
-                    
             state.expression = resultStr;
             state.justCalculated = true;
-                    
+            
             updateDisplay();
             historyManager.save(originalExpr, resultStr);
             DOM.container.classList.remove('animating');
-                    
+            
             setTimeout(() => {
                 DOM.expDisplay.style.transition = DOM.previewDisplay.style.transition = '';
                 state.isAnimating = false;
@@ -106,7 +133,6 @@ const historyManager = {
     save: (expr, res) => {
         const date = new Date();
         const dateStr = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
-                
         state.history.unshift({ expr, res, date: dateStr });
         localStorage.setItem('calcHistory', JSON.stringify(state.history));
     },
@@ -115,19 +141,15 @@ const historyManager = {
             DOM.historyList.innerHTML = '<div style="color: var(--text-muted); text-align: center; margin-top: 20px;">No history yet</div>';
             return;
         }
-
         DOM.historyList.innerHTML = '';
         let currentDate = null;
         const today = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
-
+        
         state.history.forEach(({ expr, res, date }) => {
             if (date !== currentDate) {
                 currentDate = date;
-                DOM.historyList.insertAdjacentHTML('beforeend', 
-                    `<div class="history-date">${date === today ? 'Today' : date}</div>`
-                );
+                DOM.historyList.insertAdjacentHTML('beforeend', `<div class="history-date">${date === today ? 'Today' : date}</div>`);
             }
-
             const item = document.createElement('div');
             item.className = 'history-item';
             item.innerHTML = `<div class="hist-expr">${expr}</div><div class="hist-res">=${res}</div>`;
@@ -147,25 +169,22 @@ const historyManager = {
     }
 };
 
-
 DOM.keypad.addEventListener('click', (e) => {
     if (state.isAnimating) return;
     if (state.historyOpen) historyManager.toggle();
-
+    
     const btn = e.target.closest('.btn');
     if (!btn) return;
-
+    
     if (btn.dataset.number) actions.appendNumber(btn.dataset.number);
     if (btn.dataset.operator) actions.appendOperator(btn.dataset.operator);
     if (btn.dataset.action && actions[btn.dataset.action]) actions[btn.dataset.action]();
-
+    
     if (btn.dataset.action !== 'calculate') updateDisplay();
 });
 
 DOM.historyToggleBtn.addEventListener('click', historyManager.toggle);
 DOM.clearHistoryBtn.addEventListener('click', historyManager.clear);
-
-
 
 const keyboardMap = {
     '0': '[data-number="0"]', '1': '[data-number="1"]', '2': '[data-number="2"]',
@@ -181,11 +200,18 @@ const keyboardMap = {
 };
 
 document.addEventListener('keydown', (e) => {
+    const splashScreen = document.getElementById('splash-screen');
+    if (splashScreen && !splashScreen.classList.contains('hidden')) {
+        splashScreen.classList.add('hidden');
+        document.getElementById('main-calculator').classList.add('show');
+        document.getElementById('main-footer').classList.add('show');
+    }
+    
     if (state.historyOpen) {
         if (e.key === 'Escape') historyManager.toggle();
         return;
     }
-
+    
     const selector = keyboardMap[e.key];
     if (selector) {
         e.preventDefault();
@@ -198,7 +224,6 @@ document.addEventListener('keydown', (e) => {
                 btn.style.transform = '';
                 btn.style.filter = '';
             }, 100);
-
             btn.click();
         }
     }
