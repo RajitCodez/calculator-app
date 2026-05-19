@@ -12,13 +12,13 @@ A sleek, production-ready web calculator built with HTML, CSS, and Vanilla JavaS
 ## Preview
 
 ### Loading Screen
-![Loading Screen](screeenshot-loading-screen.png)
+![Loading Screen](assets/screeenshot-loading-screen.png)
 
 ### Calculator app
-![Calculator app](screenshot-calculator-app.png)
+![Calculator app](assets/screenshot-calculator-app.png)
 
 ### History management
-![History management](screenshot-history-management.png)  
+![History management](assets/screenshot-history-management.png)  
 
 ---
 
