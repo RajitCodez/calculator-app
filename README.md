@@ -12,7 +12,7 @@ A sleek, production-ready web calculator built with HTML, CSS, and Vanilla JavaS
 ## Preview
 
 ### Loading Screen
-![Loading Screen](assets/screeenshot-loading-screen.png)
+![Loading Screen](assets/screenshot-loading-screen.png)
 
 ### Calculator app
 ![Calculator app](assets/screenshot-calculator-app.png)
